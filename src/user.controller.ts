@@ -13,7 +13,7 @@ export class UserController {
   }
 
   @Get('/user')
-  @Roles({ roles: ['user', ''] })
+  @Roles({ roles: ['user'] })
   getUser(): string {
     return `${this.userService.greet()}, User!`;
   }

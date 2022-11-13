@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
     KeycloakConnectOptions,
     KeycloakConnectOptionsFactory,
@@ -9,12 +10,14 @@ import {
 @Injectable()
 export class KeycloakConfigService implements KeycloakConnectOptionsFactory {
 
+    constructor(private readonly configService: ConfigService) { }
+
     createKeycloakConnectOptions(): KeycloakConnectOptions {
         return {
-            authServerUrl: 'http://localhost:8080',
-            realm: 'demo',
-            clientId: 'nest-demo',
-            secret: 'P0bZJ0zcRiszksn4sCaNSRCBut3kRm0N',
+            authServerUrl: this.configService.getOrThrow<string>('kc.baseUrl'),
+            realm: this.configService.getOrThrow<string>('kc.realm'),
+            clientId: this.configService.getOrThrow<string>('kc.clientId'),
+            secret: this.configService.getOrThrow<string>('kc.clientSecret'),
             cookieKey: 'KEYCLOAK_JWT',
             logLevels: ['verbose'],
             useNestLogger: true,
