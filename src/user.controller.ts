@@ -1,10 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import {
-  AllowAnyRole,
-  Public,
-  Roles,
-  Unprotected,
-} from 'nest-keycloak-connect';
+import { Public, Roles } from 'nest-keycloak-connect';
 import { UserService } from './user.service';
 
 @Controller()
@@ -12,27 +7,20 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('/public')
-  @Unprotected()
+  @Public()
   getpublic(): string {
-    return `${this.userService.getHello()} from public`;
+    return `${this.userService.greet()}, Everybody!`;
   }
 
   @Get('/user')
-  @Roles('user')
-  // @Roles('realm:app-user') // protected using realm role
+  @Roles({ roles: ['user', ''] })
   getUser(): string {
-    return `${this.userService.getHello()} from user`;
+    return `${this.userService.greet()}, User!`;
   }
 
   @Get('/admin')
-  @Roles('admin')
+  @Roles({ roles: ['admin'] })
   getAdmin(): string {
-    return `${this.userService.getHello()} from admin`;
-  }
-
-  @Get('/all')
-  @AllowAnyRole()
-  getAll(): string {
-    return `${this.userService.getHello()} from all`;
+    return `${this.userService.greet()}, Admin!`;
   }
 }
