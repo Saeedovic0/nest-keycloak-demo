@@ -1,0 +1,48 @@
+version: '3.9'
+
+services:
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.1
+    container_name: keycloak-nest-demo
+    restart: on-failure
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: 'true'
+    command: start-dev
+    hostname: keycloak.docker
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  nest-demo-service:
+    image: nest-demo
+    container_name: nest-demo-service
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: always
+    environment:
+      PORT: 3000
+      KC_BASE_URL: 'http://keycloak.docker:8080'
+      KC_REALM: 'demo'
+      KC_CLIENT_ID: 'nest-demo'
+      KC_CLIENT_SECRET: 'P0bZJ0zcRiszksn4sCaNSRCBut3kRm0N'
+    ports:
+      - 3000:3000
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
