@@ -34,7 +34,7 @@ services:
       KC_BASE_URL: 'http://keycloak.docker:8080'
       KC_REALM: 'demo'
       KC_CLIENT_ID: 'nest-demo'
-      KC_CLIENT_SECRET: 'P0bZJ0zcRiszksn4sCaNSRCBut3kRm0N'
+      KC_CLIENT_SECRET: '<REPLACE_ME>'
     ports:
       - 3000:3000
     depends_on:
